@@ -3,20 +3,22 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: AI Sentinel camera, incident, analytics, and video-analysis API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: dashboard
+  - name: cameras
+  - name: incidents
+  - name: analysis
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +26,256 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /sentinel/summary:
+    get:
+      operationId: getSentinelSummary
+      tags: [dashboard]
+      summary: Get live dashboard totals and daily incident trends
+      responses:
+        "200":
+          description: Current persisted dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SentinelSummary"
+  /sentinel/cameras:
+    get:
+      operationId: listCameras
+      tags: [cameras]
+      summary: List configured cameras
+      responses:
+        "200":
+          description: Cameras
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Camera"
+    post:
+      operationId: createCamera
+      tags: [cameras]
+      summary: Add a camera configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CameraInput"
+      responses:
+        "201":
+          description: Camera created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Camera"
+  /sentinel/cameras/{cameraId}:
+    patch:
+      operationId: updateCamera
+      tags: [cameras]
+      summary: Update a camera configuration
+      parameters:
+        - name: cameraId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CameraUpdate"
+      responses:
+        "200":
+          description: Updated camera
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Camera"
+        "404":
+          description: Camera not found
+    delete:
+      operationId: deleteCamera
+      tags: [cameras]
+      summary: Remove a camera configuration
+      parameters:
+        - name: cameraId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Camera removed
+        "404":
+          description: Camera not found
+  /sentinel/incidents:
+    get:
+      operationId: listIncidents
+      tags: [incidents]
+      summary: Search incident history
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, verified, dismissed, resolved]
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [low, medium, high]
+        - name: cameraId
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Matching incidents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Incident"
+  /sentinel/incidents/{incidentId}:
+    patch:
+      operationId: updateIncident
+      tags: [incidents]
+      summary: Change an incident review status
+      parameters:
+        - name: incidentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentUpdate"
+      responses:
+        "200":
+          description: Updated incident
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+        "404":
+          description: Incident not found
+  /sentinel/incidents/{incidentId}/notify:
+    post:
+      operationId: simulateNotification
+      tags: [incidents]
+      summary: Record a simulated control-room notification
+      parameters:
+        - name: incidentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationInput"
+      responses:
+        "200":
+          description: Simulation recorded; no real message was sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationResult"
+        "404":
+          description: Incident not found
+        "409":
+          description: Incident must be human-verified first
+  /sentinel/analyze:
+    post:
+      operationId: analyzeVideo
+      tags: [analysis]
+      summary: Upload and analyze a traffic video
+      description: Runs real YOLO inference only when the model dependencies and weights are installed. Otherwise stores the upload and returns an explicit unavailable status without invented detections.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/VideoAnalysisInput"
+      responses:
+        "200":
+          description: Analysis result, including explicit model availability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoAnalysisResult"
+        "400":
+          description: Unsupported or invalid video
+        "413":
+          description: Video exceeds the upload limit
+  /sentinel/evidence/{filename}:
+    get:
+      operationId: getEvidence
+      tags: [incidents]
+      summary: Retrieve a saved incident snapshot
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Evidence image
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Evidence not found
+  /sentinel/videos/{filename}:
+    get:
+      operationId: getUploadedVideo
+      tags: [analysis]
+      summary: Retrieve a previously uploaded video
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Uploaded video
+          content:
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+            video/quicktime:
+              schema:
+                type: string
+                format: binary
+            video/x-msvideo:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Video not found
 components:
   schemas:
     HealthStatus:
@@ -31,6 +283,131 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
-
+      required: [status]
+    CameraInput:
+      type: object
+      required: [name, location]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 100 }
+        location: { type: string, minLength: 1, maxLength: 200 }
+        latitude: { type: ["number", "null"], minimum: -90, maximum: 90 }
+        longitude: { type: ["number", "null"], minimum: -180, maximum: 180 }
+        status: { type: string, enum: [online, offline, maintenance] }
+    CameraUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 100 }
+        location: { type: string, minLength: 1, maxLength: 200 }
+        latitude: { type: ["number", "null"], minimum: -90, maximum: 90 }
+        longitude: { type: ["number", "null"], minimum: -180, maximum: 180 }
+        status: { type: string, enum: [online, offline, maintenance] }
+    Camera:
+      type: object
+      required: [id, name, location, latitude, longitude, status, createdAt]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        location: { type: string }
+        latitude: { type: ["number", "null"] }
+        longitude: { type: ["number", "null"] }
+        status: { type: string, enum: [online, offline, maintenance] }
+        createdAt: { type: string, format: date-time }
+    IncidentUpdate:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [verified, dismissed, resolved] }
+    NotificationInput:
+      type: object
+      required: [recipient]
+      properties:
+        recipient: { type: string, minLength: 1, maxLength: 160 }
+    NotificationResult:
+      type: object
+      required: [incidentId, recipient, status, createdAt, message]
+      properties:
+        incidentId: { type: string }
+        recipient: { type: string }
+        status: { type: string, enum: [simulated] }
+        createdAt: { type: string, format: date-time }
+        message: { type: string }
+    Incident:
+      type: object
+      required: [id, createdAt, cameraId, cameraName, location, status, severity, signals, evidenceUrl, notificationStatus, sourceName]
+      properties:
+        id: { type: string }
+        createdAt: { type: string, format: date-time }
+        cameraId: { type: string }
+        cameraName: { type: string }
+        location: { type: string }
+        latitude: { type: ["number", "null"] }
+        longitude: { type: ["number", "null"] }
+        status: { type: string, enum: [pending, verified, dismissed, resolved] }
+        severity: { type: string, enum: [low, medium, high] }
+        signals:
+          type: array
+          items: { type: string }
+        evidenceUrl: { type: string }
+        notificationStatus: { type: string, enum: [not_sent, simulated] }
+        sourceName: { type: string }
+        detectionCount: { type: integer, minimum: 0 }
+    DailyCount:
+      type: object
+      required: [date, count]
+      properties:
+        date: { type: string, format: date }
+        count: { type: integer, minimum: 0 }
+    SentinelSummary:
+      type: object
+      required: [totalIncidents, pendingIncidents, verifiedIncidents, onlineCameras, totalCameras, daily]
+      properties:
+        totalIncidents: { type: integer }
+        pendingIncidents: { type: integer }
+        verifiedIncidents: { type: integer }
+        onlineCameras: { type: integer }
+        totalCameras: { type: integer }
+        daily:
+          type: array
+          items: { $ref: "#/components/schemas/DailyCount" }
+        modelAvailable: { type: boolean }
+        modelMessage: { type: string }
+    VideoAnalysisInput:
+      type: object
+      required: [video, cameraId]
+      properties:
+        video:
+          type: string
+          format: binary
+        cameraId: { type: string }
+        location: { type: string, maxLength: 200 }
+        latitude: { type: ["number", "null"], minimum: -90, maximum: 90 }
+        longitude: { type: ["number", "null"], minimum: -180, maximum: 180 }
+        confidenceThreshold: { type: number, minimum: 0.1, maximum: 0.95, default: 0.35 }
+        suspiciousThreshold: { type: integer, minimum: 2, maximum: 12, default: 3 }
+    Detection:
+      type: object
+      required: [className, confidence, x1, y1, x2, y2, frame]
+      properties:
+        className: { type: string }
+        confidence: { type: number }
+        x1: { type: number }
+        y1: { type: number }
+        x2: { type: number }
+        y2: { type: number }
+        frame: { type: integer }
+    VideoAnalysisResult:
+      type: object
+      required: [modelStatus, modelMessage, detections, processedFrames, incidents]
+      properties:
+        modelStatus: { type: string, enum: [available, unavailable, error] }
+        modelMessage: { type: string }
+        detections:
+          type: array
+          items: { $ref: "#/components/schemas/Detection" }
+        processedFrames:
+          type: array
+          items: { type: string }
+        incidents:
+          type: array
+          items: { $ref: "#/components/schemas/Incident" }
+        videoUrl: { type: string }

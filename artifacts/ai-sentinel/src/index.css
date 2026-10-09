@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:is(.dark *));
+@theme inline {
+  --color-background: hsl(var(--background)); --color-foreground: hsl(var(--foreground)); --color-border: hsl(var(--border)); --color-input: hsl(var(--input)); --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card)); --color-card-foreground: hsl(var(--card-foreground)); --color-popover: hsl(var(--popover)); --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary)); --color-primary-foreground: hsl(var(--primary-foreground)); --color-secondary: hsl(var(--secondary)); --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted)); --color-muted-foreground: hsl(var(--muted-foreground)); --color-accent: hsl(var(--accent)); --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive)); --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --font-sans: var(--app-font-sans); --font-mono: var(--app-font-mono); --radius-lg: var(--radius);
+}
+:root,.dark {
+  color-scheme: dark;
+  --background: 220 24% 8%; --foreground: 210 20% 91%; --border: 218 18% 20%; --input: 218 18% 23%;
+  --card: 220 22% 11%; --card-foreground: 210 20% 91%; --popover: 220 22% 12%; --popover-foreground: 210 20% 91%;
+  --primary: 173 52% 48%; --primary-foreground: 220 24% 8%; --secondary: 218 18% 16%; --secondary-foreground: 210 20% 88%;
+  --muted: 218 18% 15%; --muted-foreground: 215 13% 58%; --accent: 218 18% 17%; --accent-foreground: 210 20% 91%;
+  --destructive: 0 70% 57%; --destructive-foreground: 0 0% 100%; --ring: 173 52% 48%;
+  --app-font-sans: 'Manrope', sans-serif; --app-font-mono: 'DM Mono', monospace; --radius: 0.6rem;
+}
+* { box-sizing: border-box; }
+html { background: #0f141d; }
+body { margin: 0; min-height: 100dvh; background: hsl(var(--background)); color: hsl(var(--foreground)); font-family: var(--app-font-sans); font-size: 13px; -webkit-font-smoothing: antialiased; }
+button,input,select,textarea { font: inherit; }
+button { cursor: pointer; }
+::selection { background: #1d726d; color: #effffc; }
+.mono { font-family: var(--app-font-mono); }
+.surface { background: #151c27; border: 1px solid #26313e; border-radius: 10px; }
+.surface-soft { background: #121923; border: 1px solid #202b38; border-radius: 10px; }
+.eyebrow { color: #8291a3; font: 500 10px var(--app-font-mono); letter-spacing: .12em; text-transform: uppercase; }
+.muted { color: #8997a8; }
+.field { background: #0f151e; border: 1px solid #2b3745; border-radius: 6px; color: #e4ebf1; outline: none; padding: 10px 12px; transition: border-color .18s, box-shadow .18s; width: 100%; }
+.field:focus { border-color: #338e86; box-shadow: 0 0 0 3px #257c741c; }
+.field::placeholder { color: #687787; }
+.btn { align-items: center; background: #1a2430; border: 1px solid #303c4a; border-radius: 6px; color: #dce4eb; display: inline-flex; gap: 8px; justify-content: center; min-height: 36px; padding: 0 12px; transition: .18s ease; white-space: nowrap; }
+.btn:hover { background: #222e3b; border-color: #475666; }
+.btn:disabled { cursor: not-allowed; opacity: .45; }
+.btn-primary { background: #2e827b; border-color: #39968e; color: #f1fffc; }
+.btn-primary:hover { background: #39958c; border-color: #51aaa1; }
+.btn-danger { background: #451e25; border-color: #71313a; color: #ffc2c5; }
+.btn-quiet { background: transparent; border-color: transparent; color: #a9b4c0; }
+.tag { align-items: center; border: 1px solid #35414e; border-radius: 999px; display: inline-flex; font: 10px var(--app-font-mono); gap: 6px; padding: 4px 8px; text-transform: uppercase; letter-spacing: .04em; }
+.tag-green { background: #142922; border-color: #275a43; color: #83d4a9; }
+.tag-amber { background: #30281a; border-color: #65502a; color: #e5bd6a; }
+.tag-red { background: #321c22; border-color: #68313a; color: #f28e96; }
+.tag-slate { background: #202a36; color: #a7b5c2; }
+.skeleton { background: linear-gradient(90deg,#1a2430,#202c39,#1a2430); background-size: 200% 100%; animation: shimmer 1.4s ease infinite; border-radius: 6px; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+@keyframes enter { from { opacity: 0; transform: translateY(7px) } to { opacity: 1; transform: translateY(0) } }
+.animate-enter { animation: enter .32s ease both; }
+.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #35414e; border-radius: 8px; }
+@media(max-width:767px) { .desktop-only { display:none!important; } }

@@ -10,6 +10,10 @@ out-tsc
 
 # dependencies
 node_modules
+.pythonlibs/
+.venv/
+.data/
+artifacts/api-server/.data/
 
 # IDEs and editors
 /.idea

@@ -1,0 +1,194 @@
+Build a complete, professional, working web application named "AI Sentinel – AI-Powered CCTV Accident Detection and Emergency Alert System" for a 10-hour college hackathon.
+
+Project theme: The Convergence of Intelligence & Autonomy.
+
+Objective:
+Create an AI-based road safety system that analyzes CCTV video footage, detects vehicles, identifies possible road accidents, captures evidence, and displays alerts on an emergency monitoring dashboard.
+
+Do not create only a static UI or landing page. Build a functional application with a working backend and video-analysis pipeline.
+
+1. Technology stack
+
+- Frontend: React, TypeScript, Tailwind CSS.
+- Backend: Python with Flask or FastAPI.
+- AI: Ultralytics YOLO pretrained object detection model.
+- Video processing: OpenCV.
+- Database: SQLite.
+- Charts: Recharts or a similar chart library.
+- Maps: OpenStreetMap with Leaflet, if feasible.
+
+Use a compatible project structure and provide clear setup instructions. If the platform cannot run Python AI dependencies, explain the limitation and implement a working fallback rather than pretending that AI detection is operational.
+
+2. Professional dashboard
+
+Design a modern, responsive, dark-themed emergency control room dashboard.
+
+Include:
+
+- Project name and logo: AI Sentinel.
+- Sidebar navigation.
+- Overview dashboard.
+- CCTV monitoring page.
+- Accident alerts page.
+- Incident history.
+- Camera management.
+- Analytics and reports.
+- Settings.
+
+Use a professional navy/charcoal interface, red for critical alerts, green for normal status, and amber for warnings.
+
+3. CCTV video input
+
+Allow users to:
+
+- Upload MP4, AVI, or MOV video files.
+- Play, pause, and replay uploaded footage.
+- View processed video frames.
+- Select a demo traffic video if one is available.
+- View camera status and camera ID.
+
+Validate file types and file sizes. Do not require a physical CCTV camera to demonstrate the project.
+
+4. AI vehicle detection
+
+Implement actual object detection using a compatible pretrained YOLO model.
+
+Detect supported road objects such as:
+
+- Cars.
+- Motorcycles.
+- Buses.
+- Trucks.
+- Bicycles.
+- People.
+
+Display bounding boxes, class labels, and confidence scores on processed frames.
+
+Use real model predictions when the model is available. Clearly display an error or setup instruction if model loading fails. Never display fabricated predictions as real AI results.
+
+5. Possible accident detection
+
+Create an accident-analysis module that evaluates video over time.
+
+Use available signals such as:
+
+- Vehicle tracking across frames.
+- Sudden changes in movement.
+- Abrupt stops.
+- Unusual interactions or possible collisions between tracked vehicles.
+- Persistent suspicious activity.
+
+Implement an explainable rule-based prototype with configurable thresholds. Combine multiple signals before raising an alert.
+
+Clearly distinguish:
+
+- Normal traffic.
+- Suspicious activity.
+- Possible accident.
+
+Do not claim that vehicle proximity or a sudden stop alone proves a collision. If no validated accident-classification model is available, explain that this is a prototype and that accident detection needs further validation.
+
+6. Accident alert system
+
+When a possible accident is detected:
+
+- Create an incident record.
+- Capture and save the relevant video frame.
+- Record the detection timestamp.
+- Record the camera ID and configured camera location.
+- Display an alert on the dashboard.
+- Show the evidence image.
+- Show the detection signals and model confidence where meaningful.
+- Allow an operator to mark the incident as verified, dismissed, or resolved.
+
+Use a severity label of low, medium, or high based on transparent configurable rules. Do not present a rule-based score as a calibrated probability.
+
+7. Camera location and map
+
+Allow the user to configure a location for each camera.
+
+Display incident locations on an interactive map when coordinates are available. For uploaded videos, allow a user to assign a demo location.
+
+Do not claim to determine the real GPS location of an uploaded video automatically.
+
+8. Incident history and analytics
+
+Create a working incident-history page with:
+
+- Incident ID.
+- Date and time.
+- Camera ID.
+- Location.
+- Status.
+- Severity.
+- Evidence snapshot.
+
+Add filters by date, status, camera, and severity.
+
+Include dashboard statistics and charts for incident counts, camera activity, and daily trends using actual application records.
+
+9. Emergency notification simulation
+
+Create an emergency-notification panel that simulates sending an alert to a designated control room.
+
+Display the recipient, incident details, and notification status. Do not claim that a real SMS, email, ambulance dispatch, or emergency-service notification was sent unless an actual integration is configured and confirmed.
+
+Require human verification before treating an incident as confirmed.
+
+10. Database
+
+Use SQLite to persist:
+
+- Camera configurations.
+- Incident records.
+- Detection timestamps.
+- Incident status.
+- Evidence file paths.
+- Notification logs.
+
+The data must remain available after refreshing the page or restarting the application.
+
+11. Safety, privacy, and reliability
+
+- Use authorized CCTV footage or sample videos with appropriate usage rights.
+- Do not identify people or perform facial recognition.
+- Validate uploaded files and protect against unsafe file paths.
+- Handle unsupported videos and missing model weights gracefully.
+- Do not expose API keys or secrets in frontend code.
+- Clearly label demo data and simulated notifications.
+- Include a privacy notice and a warning that the system is an experimental decision-support tool, not a replacement for human emergency response.
+
+12. Required deliverables
+
+Build the application end to end, including:
+
+- Functional frontend.
+- Working backend APIs.
+- Real video upload and processing.
+- YOLO object detection integration.
+- Explainable prototype accident-analysis logic.
+- Evidence capture.
+- SQLite persistence.
+- Incident dashboard and history.
+- Responsive design.
+- README with installation and run instructions.
+- A list of known limitations and future improvements.
+
+13. Build priorities
+
+Implement in this order:
+
+1. Working application structure and dashboard.
+2. Video upload and playback.
+3. Real YOLO vehicle detection.
+4. Accident-analysis prototype.
+5. Evidence capture and alerts.
+6. Database and incident history.
+7. Analytics and map.
+8. Testing and documentation.
+
+First inspect the runtime and install the compatible dependencies. Then implement the application, run it, fix errors, and test the main workflow.
+
+Final acceptance test: I must be able to upload a traffic video, run real vehicle detection, view the processed results, generate a clearly labeled possible-accident alert when the configured detection logic is triggered, save the evidence, and see the incident in the dashboard history.
+
+Prioritize a working, demonstrable MVP over unnecessary features. Do not leave core functionality as placeholder buttons or fake AI results

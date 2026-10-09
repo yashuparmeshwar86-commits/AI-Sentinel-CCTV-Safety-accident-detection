@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "AI Sentinel"
+description = "An experimental road-safety monitoring app for uploading authorized CCTV footage, running real vehicle detection when model weights are available, reviewing explainable possible-accident signals, and managing evidence-backed incidents."
+version = "1.0.0"
+id = "artifacts/ai-sentinel"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22289
+
+[services.development]
+run = "pnpm --filter @workspace/ai-sentinel run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ai-sentinel", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/ai-sentinel/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22289"
+BASE_PATH = "/"
